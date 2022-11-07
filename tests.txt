@@ -1,0 +1,5 @@
+echo -n abc | ./a.out  #test1 PASS
+echo {A..Z} {a..e} | ./a.out  #test2 PASS
+echo {A..Z} {a..f} | ./a.out  #test3 PASS
+for I in {1..1000};do echo -n a;done | ./a.out 2>/dev/null  #test4 FAIL
+./a.out <a.c  #test5 PASS
