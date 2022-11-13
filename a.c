@@ -203,10 +203,10 @@ void hash() {
         }
     }
 
-    for (i = 0; i < 8; ++i) {
-        printf("%08x", hs[i]);
+    for (i = 0; i < 7; ++i) {
+        printf("%08x ", hs[i]);
     }
-    printf("\n");
+    printf("%08x\n", hs[7]);
 }
 
 void main() {
