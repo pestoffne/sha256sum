@@ -2,7 +2,7 @@ APP=./a.out
 
 default_target: ${APP}
 
-${APP}:
+${APP}: a.c
 	cc a.c
 
 clean:
