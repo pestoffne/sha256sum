@@ -94,22 +94,33 @@ void pad(struct Reader *, ssize_t);
 void read_block(struct Reader *this, word_t *ms) {
     ssize_t read_bytes, i;
 
-    read_bytes = read(this->file_descriptor, this->buffer, 64);
+    char *buffer_ptr = this->buffer;
+    ssize_t block_room_bytes = 64;
 
-    if (read_bytes == -1) {  // Error on read
-        if (EINTR == errno) {
-            D("eintr\n");
-            exit(EXIT_FAILURE);
-        } else {
-            perror("read. ");
-            exit(EXIT_FAILURE);
+    while (block_room_bytes) {
+        read_bytes = read(this->file_descriptor, buffer_ptr, block_room_bytes);
+
+        if (0 == read_bytes) {
+            break;
         }
+
+        if (-1 == read_bytes) {
+            if (EINTR == errno) {
+                continue;
+            }
+
+            perror("read. ");
+            break;
+        }
+
+        block_room_bytes -= read_bytes;
+        buffer_ptr += read_bytes;
     }
 
-    this->message_size_bits += read_bytes << 3;
+    this->message_size_bits += (64 - block_room_bytes) << 3;
 
-    if (read_bytes < 64) {
-        pad(this, read_bytes);
+    if (block_room_bytes) {
+        pad(this, 64 - block_room_bytes);
     }
 
     memcpy(ms, this->buffer, 64);
