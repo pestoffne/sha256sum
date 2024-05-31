@@ -2,6 +2,8 @@ APP=./a.out
 
 default_target: ${APP}
 
+.PHONY: $(addprefix test-nist-, b1 b2 b3) $(addprefix test-pad-, 1 2 3 4)
+
 ${APP}: a.c
 	cc a.c
 
@@ -21,8 +23,8 @@ define test
 	$(call cmp_hashes)
 endef
 
-tests: ${APP} test-nist-b1 test-nist-b2 test-nist-b3 \
-test-pad-1 test-pad-2 test-pad-3 test-pad-4
+tests: $(addprefix test-nist-, b1 b2 b3) $(addprefix test-pad-, 1 2 3 4) \
+${APP}
 
 test-nist-b1: ${APP}
 	# NIST.FIPS.180-2  B.1 SHA-256 Example (One-Block Message)
