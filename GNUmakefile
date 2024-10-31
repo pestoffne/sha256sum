@@ -1,11 +1,11 @@
-APP=./a.out
+APP=./sha256sum
 
 default_target: ${APP}
 
-.PHONY: $(addprefix test-nist-, b1 b2 b3) $(addprefix test-pad-, 1 2 3 4)
+.PHONY: $(addprefix test-nist-, b1 b2 b3) $(addprefix test-pad-, 1 2 3 4) clean
 
 ${APP}: a.c
-	cc a.c
+	cc a.c -o "${APP}"
 
 clean:
 	rm -f "${APP}"
@@ -19,7 +19,7 @@ endef
 define test
 	$(eval INPUT=${1})
 	$(eval EXPECT=${2})
-	$(eval ACTUAL=$(shell echo -n "${INPUT}" | ./${APP} 2>/dev/null))
+	$(eval ACTUAL=$(shell echo -n "${INPUT}" | "${APP}" 2>/dev/null))
 	$(call cmp_hashes)
 endef
 
@@ -43,7 +43,7 @@ test-nist-b2: ${APP}
 test-nist-b3: ${APP}
 	# NIST.FIPS.180-2  B.3 SHA-256 Example (Long Message)
 	$(eval ACTUAL=$(shell for I in `seq 1 1000000`;do echo -n a;done\
-	  | ./${APP} 2>/dev/null))
+	  | "${APP}" 2>/dev/null))
 	$(eval EXPECT=\
 	  cdc76e5c 9914fb92 81a1c7e2 84d73e67 f1809a48 a497200e 046d39cc c7112cd0)
 	$(call cmp_hashes)
